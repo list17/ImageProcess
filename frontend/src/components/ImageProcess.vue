@@ -42,7 +42,6 @@
       <el-button @click='download' size='big'>下载图片</el-button>
     </div>
   </div>
-
 </div>
 </template>
 
@@ -63,7 +62,7 @@
       return {
         dialogImageUrl: '',
         dialogImageChangedUrl: '',
-        dialogImageChangedUrlList: [],
+        // dialogImageChangedUrlList: [],
         fileUpload:{"is_url": false, "url": '' },
         texts:[
           {"text":'处理前',"fit":'contain','url':""},
@@ -82,8 +81,8 @@
       FindFaces(){
         let params = new URLSearchParams()
         // params.append('url', dialogImageUrl)
-        this.$axios.post('/features/findfaces',params).then(response => {
-
+        this.$axios.post('/features/faceemoji',params).then(response => {
+          this.texts[1]['url']  = response.data['url'];
         })
       },
       demo2(){
@@ -114,8 +113,9 @@
         this.$confirm('文件个数超出限制，请点击图片中的删除按钮删除后进行再次上传','确认');
       },
       handleRemove(file, fileList) {
-        this.dialogImageUrl = ""
-        this.texts[0]['url'] = ""
+        this.dialogImageUrl = "";
+        this.texts[0]['url'] = "";
+        this.texts[1]['url'] = "";
       },
       handlePictureCardPreview(file) {
         this.dialogImageUrl = file.url;
@@ -123,7 +123,6 @@
         this.dialogVisible = true;
       },
       changeFile(file, fileList){
-        console.log(typeof file.url);
         if(typeof file.url === "string"){
           this.dialogImageUrl = file.url;
           this.texts[0]['url'] = file.url;

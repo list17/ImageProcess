@@ -1,7 +1,7 @@
 from django.conf.urls import url
-from .views import FindFaces
+from .views import FaceEmoji
 
 
 urlpatterns = [
-    url(r'findfaces', FindFaces.as_view())
+    url(r'faceemoji', FaceEmoji.as_view())
 ]

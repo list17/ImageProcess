@@ -5,7 +5,9 @@ from .config import FeaturesDef
 # Create your models here.
 
 class UserRecord(models.Model):
-    features = models.IntegerField(default=FeaturesDef.no_feature)
     data = models.DateTimeField(auto_now_add=True)
-    upload = models.ForeignKey(UserUpload,on_delete=models.CASCADE)
+
+    features = models.IntegerField(default=FeaturesDef.no_feature)
+    init_image = models.FileField(upload_to='storages/init/%Y/%m/%d/')
+    result_image = models.FileField(upload_to='storages/result/%Y/%m/%d/')
     user = models.ForeignKey(User,on_delete=models.CASCADE)

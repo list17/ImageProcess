@@ -10,6 +10,7 @@ import random
 import string
 
 from .models import User, RegisterCache
+from filetransfer.models import UserUpload
 
 def randomString(stringLength=32):
     """Generate a random string of fixed length """
@@ -93,4 +94,15 @@ class RegisterConfirm(View):
         user = User.objects.create(username=user_cache.token, email=user_cache.email)
         user.set_raw_password(user_cache.password)
         user.save()
+        user_upload = UserUpload.objects.create(user=user)
+        user_upload.save()
         return HttpResponse("注册成功")
+
+
+class Logout(View):
+    def get(self, request):
+        if not request.user.is_anonymous:
+            logout(request)
+            return JsonResponse(data={"msg":"logout success"}, status=200)
+        else:
+            return JsonResponse(data={"msg":"you have already logout"}, status=200)

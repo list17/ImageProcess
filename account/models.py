@@ -5,7 +5,6 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     nickname = models.CharField(max_length=32)
-    uploadnum = models.IntegerField(default=0)
     def set_raw_password(self, password):
         self.password = password
 

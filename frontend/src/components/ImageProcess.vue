@@ -10,36 +10,61 @@
       </el-image>
     </div>
   </div>
-  <div class="button-group">
-    <div class="button-display">
-      <el-form :model="form">
-          <el-upload
-            ref="upload"
-            action="api/filetransfer/upload/"
-            accept="image/png,image/gif,image/jpg,image/jpeg"
-            list-type="picture-card"
-            :limit=1
-            :auto-upload="false"
-            :on-exceed="handleExceed"
-            :before-upload="handleBeforeUpload"
-            :on-preview="handlePictureCardPreview"
-            :on-remove="handleRemove"
-            :on-success="uploadSuccess"
-            :on-change="changeFile">
-            <i class="el-icon-plus"></i>
-          </el-upload>
-          <el-dialog :visible.sync="dialogVisible">
-            <img width="100%" :src="texts[0]['url']" alt="">
-          </el-dialog>
-        <el-form-item style="display:flex; justify-content:space-around ;">
-          <el-button size="small" type="primary" @click="uploadFile">立即上传</el-button>
+
+<div style="margin: 20px;"></div>
+
+  <div style="margin-top:50px;">
+    <div style="width:50%;margin:0 auto;">
+
+
+      <el-form label-width="100px">
+
+        <el-form-item label="通过url上传:">
+          <el-input
+          :disabled="inputDisabled"
+          placeholder="请输入图片链接，可以通过在浏览器图片点击右键选择复制链接得到，支持后缀名为.jpg/.jpeg/.png"
+          v-model="texts[0]['url']"
+          clearable></el-input>
+        </el-form-item>
+
+        <el-form-item label="本地图片上传:">
+
+          <div class="button-display">
+            <el-form :model="form">
+                <el-upload
+                  ref="upload"
+                  action="api/filetransfer/upload/"
+                  accept="image/png,image/gif,image/jpg,image/jpeg"
+                  list-type="picture-card"
+                  :limit=1
+                  :auto-upload="false"
+                  :on-exceed="handleExceed"
+                  :before-upload="handleBeforeUpload"
+                  :on-preview="handlePictureCardPreview"
+                  :on-remove="handleRemove"
+                  :on-success="uploadSuccess"
+                  :on-change="changeFile">
+                  <i class="el-icon-plus"></i>
+                </el-upload>
+                <el-dialog :visible.sync="dialogVisible">
+                  <img width="100%" :src="texts[0]['url']" alt="">
+                </el-dialog>
+              <el-form-item style="display:flex; justify-content:space-around ;">
+                <el-button size="small" type="primary" @click="uploadFile">立即上传</el-button>
+              </el-form-item>
+            </el-form>
+          </div>
+
         </el-form-item>
       </el-form>
     </div>
-    <div class='button-display2'>
-      <el-button v-loading.fullscreen.lock="isloading" @click='FindFaces' size='big'>一键"美颜"</el-button>
-      <el-button v-loading.fullscreen.lock="isloading" @click='demo2' size='big'>demo2</el-button>
-      <el-button @click='download' size='big'>下载图片</el-button>
+    <div class="button-group">
+
+      <div class='button-display2'>
+        <el-button v-loading.fullscreen.lock="isloading" @click='FindFaces' size='big'>一键"美颜"</el-button>
+        <el-button v-loading.fullscreen.lock="isloading" @click='demo2' size='big'>demo2</el-button>
+        <el-button @click='download' size='big'>下载图片</el-button>
+      </div>
     </div>
   </div>
 </div>
@@ -68,6 +93,7 @@
         dialogVisible: false,
         form: {},
         isloading: false,
+        inputDisabled: false
       }
     },
     methods: {
@@ -83,9 +109,16 @@
       },
       download(){
         this.$confirm('开始下载图片','确认').then(()=>{
-
+          // let params = new URLSearchParams()
+          // params.append('path', this.texts[1]['url'])
+          // this.$axios.post('/filetransfer/download_file',params).then((response)=>{
+          //   console.log(response.data);
+          // })
+          let url = '/api/filetransfer/download_file/?path=' + this.texts[1]['url'];
+          window.open(url,'_blank');
         })
       },
+
       handleBeforeUpload(file){
         if(!(file.type === 'image/png' || file.type === 'image/jpg' || file.type === 'image/jpeg')) {
           this.$notify.warning({
@@ -108,18 +141,37 @@
       handleRemove(file, fileList) {
         this.texts[0]['url'] = "";
         this.texts[1]['url'] = "";
+        this.inputDisabled = false
       },
       handlePictureCardPreview(file) {
         this.texts[0]['url'] = file.url;
+        this.inputDisabled = true
         this.dialogVisible = true;
       },
       changeFile(file, fileList){
         if(typeof file.url === "string"){
           this.texts[0]['url'] = file.url;
+          this.inputDisabled = true
         }
       },
       uploadFile() {
-        this.$refs.upload.submit();
+        if(this.inputDisabled){
+          this.$refs.upload.submit();
+        }else{
+          if(this.texts[0]['url'].split('.')[this.texts[0]['url'].split('.').length - 1] !== 'jpeg' &&
+          this.texts[0]['url'].split('.')[this.texts[0]['url'].split('.').length - 1] !== 'jpg' &&
+          this.texts[0]['url'].split('.')[this.texts[0]['url'].split('.').length - 1] !== 'png'){
+            this.$confirm("链接不正确，请重新输入")
+            this.texts[0]['url'] = ""
+            return
+          }
+          let params = new URLSearchParams()
+          params.append('is_url',true)
+          params.append('url',this.texts[0].url)
+          this.$axios.post('api/filetransfer/upload/', params).then((response)=>{
+            this.$confirm(response.data['msg'],"确认");
+          })
+        }
       },
       uploadSuccess(response, file, fileList) {
         this.$confirm(response['msg'],"确认");

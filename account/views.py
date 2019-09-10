@@ -24,7 +24,6 @@ class Login(View):
         user login
         if user is already login returns login already
         """
-
         username = request.POST['username']
         password = request.POST['password']
 

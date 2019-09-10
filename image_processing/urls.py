@@ -21,7 +21,7 @@ from filetransfer import urls as filetransfer_urls
 from features import urls as features_urls
 
 urlpatterns = [
-    url('admin/', admin.site.urls),
+    path('admin/', admin.site.urls),
     url(r'api/user/', include(account_urls)),
     url(r'api/filetransfer/', include(filetransfer_urls)),
     url(r'api/features/', include(features_urls)),

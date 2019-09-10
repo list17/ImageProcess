@@ -88,7 +88,7 @@
         },
         handleEdit(index){
             console.log(index)
-            window.open(index['image'][1],'_blank');
+            window.open('http://127.0.0.1:8080/api/filetransfer/download_file/?'+index['image'][1].split('?')[1],'_blank');
         },
         forceFileDownload(response){
             const url = window.URL.createObjectURL(new Blob([response.data]))

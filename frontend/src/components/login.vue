@@ -10,7 +10,7 @@
 						<el-form ref="AccountForm" :model="account" :rules="rules" label-position="left" label-width="0px" class="demo-ruleForm">
 							<el-form-item prop="username" :error="errorMsg">
 								<div align="left">用户名</div>
-								<el-input type="text" v-model="account.username" auto-comlete="off" placeholder="请输入账号" prefix-icon="el-icon-third-geren"></el-input>
+								<el-input type="text" v-model="account.username" auto-comlete="off" placeholder="请输入邮箱" prefix-icon="el-icon-third-geren"></el-input>
 							</el-form-item>
 							<el-form-item prop="password" :error="errorMsg">
 								<div align="left">密码</div>

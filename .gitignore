@@ -12,7 +12,7 @@ pids
 *.pid
 *.seed
 *.pid.lock
-/storage/*
+/storages/*
 
 #add by li
 /wesite/.idea

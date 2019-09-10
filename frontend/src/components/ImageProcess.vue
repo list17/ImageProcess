@@ -29,7 +29,7 @@
             <i class="el-icon-plus"></i>
           </el-upload>
           <el-dialog :visible.sync="dialogVisible">
-            <img width="100%" :src="dialogImageUrl" alt="">
+            <img width="100%" :src="texts[0]['url']" alt="">
           </el-dialog>
         <el-form-item style="display:flex; justify-content:space-around ;">
           <el-button size="small" type="primary" @click="uploadFile">立即上传</el-button>
@@ -37,8 +37,8 @@
       </el-form>
     </div>
     <div class='button-display2'>
-      <el-button @click='FindFaces' size='big'>找到人脸</el-button>
-      <el-button @click='demo2' size='big'>demo2</el-button>
+      <el-button v-loading.fullscreen.lock="isloading" @click='FindFaces' size='big'>一键"美颜"</el-button>
+      <el-button v-loading.fullscreen.lock="isloading" @click='demo2' size='big'>demo2</el-button>
       <el-button @click='download' size='big'>下载图片</el-button>
     </div>
   </div>
@@ -60,29 +60,22 @@
     },
     data() {
       return {
-        dialogImageUrl: '',
-        dialogImageChangedUrl: '',
-        // dialogImageChangedUrlList: [],
         fileUpload:{"is_url": false, "url": '' },
         texts:[
           {"text":'处理前',"fit":'contain','url':""},
           {"text":'处理后',"fit":'fill','url':""}
         ],
         dialogVisible: false,
-        formLabelWidth: '80px',
-        limitNum: 3,
-        form: {}
+        form: {},
+        isloading: false,
       }
-    },
-    mounted() {
-
     },
     methods: {
       FindFaces(){
-        let params = new URLSearchParams()
-        // params.append('url', dialogImageUrl)
-        this.$axios.post('/features/faceemoji',params).then(response => {
+        this.isloading = true
+        this.$axios.post('/features/faceemoji').then(response => {
           this.texts[1]['url']  = response.data['url'];
+          this.isloading = false;
         })
       },
       demo2(){
@@ -94,17 +87,17 @@
         })
       },
       handleBeforeUpload(file){
-        if(!(file.type === 'image/png' || file.type === 'image/gif' || file.type === 'image/jpg' || file.type === 'image/jpeg')) {
+        if(!(file.type === 'image/png' || file.type === 'image/jpg' || file.type === 'image/jpeg')) {
           this.$notify.warning({
             title: '警告',
-            message: '请上传格式为image/png, image/gif, image/jpg, image/jpeg的图片'
+            message: '请上传格式为image/png, image/jpg, image/jpeg的图片'
           })
         }
         let size = file.size / 1024 / 1024 / 2
-        if(size > 2) {
+        if(size > 1) {
           this.$notify.warning({
-            title: '警告',
-            message: '图片大小必须小于2M'
+          title: '警告',
+            message: '图片大小必须小于1M'
           })
         }
       },
@@ -113,18 +106,15 @@
         this.$confirm('文件个数超出限制，请点击图片中的删除按钮删除后进行再次上传','确认');
       },
       handleRemove(file, fileList) {
-        this.dialogImageUrl = "";
         this.texts[0]['url'] = "";
         this.texts[1]['url'] = "";
       },
       handlePictureCardPreview(file) {
-        this.dialogImageUrl = file.url;
         this.texts[0]['url'] = file.url;
         this.dialogVisible = true;
       },
       changeFile(file, fileList){
         if(typeof file.url === "string"){
-          this.dialogImageUrl = file.url;
           this.texts[0]['url'] = file.url;
         }
       },

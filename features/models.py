@@ -5,7 +5,7 @@ from .config import FeaturesDef
 # Create your models here.
 
 class UserRecord(models.Model):
-    data = models.DateTimeField(auto_now_add=True)
+    date = models.DateField(auto_now_add=True)
 
     features = models.IntegerField(default=FeaturesDef.no_feature)
     init_image = models.FileField(upload_to='storages/init/%Y/%m/%d/')

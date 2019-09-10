@@ -8,6 +8,6 @@ class UserRecord(models.Model):
     date = models.DateField(auto_now_add=True)
 
     features = models.IntegerField(default=FeaturesDef.no_feature)
-    init_image = models.FileField(upload_to='storages/init/%Y/%m/%d/')
-    result_image = models.FileField(upload_to='storages/result/%Y/%m/%d/')
+    init_image = models.FileField(upload_to='storages/init/')
+    result_image = models.FileField(upload_to='storages/result/')
     user = models.ForeignKey(User,on_delete=models.CASCADE)

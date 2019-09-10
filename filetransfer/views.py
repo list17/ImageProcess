@@ -19,19 +19,21 @@ from features.config import FeaturesDef
 
 class FileUpload(View):
     def post(self, request):
-        user = User.objects.get(username=request.user.username)
         try:
-            url = request.POST['is_url']
-        except Exception as e:
+            user = User.objects.get(username=request.user.username)
             try:
-                user.userupload.file = request.FILES['file']
+                url = request.POST['is_url']
             except Exception as e:
-                print(e)
-                return JsonResponse(data={'msg':e},status=400)
-            user.userupload.save()
-            return JsonResponse(data={"msg":"上传成功，之后请选择您需要对上传的图片需要进行的操作"},status=200)
-        image = ImageDownload(request.POST.get('url'))
-        image.show()
+                try:
+                    user.userupload.file = request.FILES['file']
+                except Exception as e:
+                    return JsonResponse(data={'msg':e},status=400)
+                user.userupload.save()
+                return JsonResponse(data={"msg":"上传成功，之后请选择您需要对上传的图片需要进行的操作"},status=200)
+            image = ImageDownload(request.POST.get('url'))
+            image.show()
+        except Exception as e:
+            return JsonResponse(data={'msg':e},status=400)
         return JsonResponse(data={"msg":"上传成功，之后请选择您需要对上传的图片需要进行的操作"},status=200)
 
 
@@ -53,18 +55,22 @@ class GetImageByUrl(View):
         suffix = path.split('.')[-1]
         if suffix == 'png':
             content_type = 'image/png'
+            save_type = "PNG"
         elif suffix == 'jpeg':
             content_type = 'image/jpeg'
+            save_type = "JPEG"
         elif suffix == 'jpg':
             content_type = 'image/jpg'
+            save_type = "JPEG"
         else:
             return JsonResponse(data={"msg":"format error"},status=400)
         try:
-            response = HttpResponse(content_type='image/png')
+            response = HttpResponse(content_type=content_type)
             image_data = Image.open(path)
-            image_data.save(response,"PNG")
+            image_data.save(response,save_type)
         except Exception as e:
-            return JsonResponse(data={"msg":e},status=400)
+            print(e)
+            return JsonResponse(data={"msg":'a'},status=400)
         return response
 
 

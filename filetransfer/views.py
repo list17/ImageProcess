@@ -37,7 +37,8 @@ class FileUpload(View):
                     return JsonResponse(data={'msg':"error"},status=400)
                 user.userupload.save()
                 return JsonResponse(data={"msg":"上传成功，之后请选择您需要对上传的图片需要进行的操作"},status=200)
-            download_to_file_field(url, user.userupload.file)
+            if not download_to_file_field(url, user.userupload.file):
+                return JsonResponse(data={"msg":"文件超过400kb,请重新选择链接．"},status=400)
         except Exception as e:
             return JsonResponse(data={'msg':'error'},status=400)
         return JsonResponse(data={"msg":"上传成功，之后请选择您需要对上传的图片需要进行的操作"},status=200)
@@ -70,12 +71,15 @@ class FileDownload(View):
 
 def download_to_file_field(url, field):
     with TemporaryFile() as tf:
-        r = requests.get(url, stream=True)
-        for chunk in r.iter_content(chunk_size=4096):
-            tf.write(chunk)
-        tf.seek(0)
-        field.save(basename(urlsplit(url).path), File(tf))
-
+        response = requests.get(url, stream=True)
+        if len(response.content) / 1024 > 400:
+            return False
+        else:
+            for chunk in response.iter_content(chunk_size=4096):
+                tf.write(chunk)
+            tf.seek(0)
+            field.save(basename(urlsplit(url).path), File(tf))
+            return True
 
 class GetImageByUrl(View):
     def get(self, request):

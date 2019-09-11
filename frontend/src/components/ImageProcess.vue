@@ -117,18 +117,21 @@
       },
 
       handleBeforeUpload(file){
+        console.log(file.size)
         if(!(file.type === 'image/png' || file.type === 'image/jpg' || file.type === 'image/jpeg')) {
           this.$notify.warning({
             title: '警告',
-            message: '请上传格式为image/png, image/jpg, image/jpeg的图片'
+            message: '请上传格式为image/png, image/jpg, image/jpeg的图片，上传失败'
           })
+          return false
         }
-        let size = file.size / 1024 / 1024
-        if(size > 1) {
+        let size = file.size / 1024
+        if(size > 400) {
           this.$notify.warning({
           title: '警告',
-            message: '图片大小必须小于500kb'
+            message: '图片大小必须小于400kb,上传失败'
           })
+          return false
         }
       },
 
@@ -167,6 +170,11 @@
           params.append('url',this.texts[0].url)
           this.$axios.post('api/filetransfer/upload/', params).then((response)=>{
             this.$confirm(response.data['msg'],"确认");
+          }).catch((err)=>{
+            this.$notify.warning({
+            title: '警告',
+              message:err.response.data['msg']
+            })
           })
         }
       },

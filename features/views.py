@@ -19,7 +19,7 @@ from account.models import User
 from .models import UserRecord
 from .config import FeaturesDef
 from filetransfer.models import UserUpload
-from .imagenet import labels
+
 # Create your views here.
 
 class FaceEmoji(View):
@@ -76,20 +76,18 @@ class Segamentation(View):
         if request.user.is_anonymous:
             return JsonResponse(data={'msg':"not login"},status=400)
         user = User.objects.get(username=request.user.username)
+        fcn_resnet101 = models.segmentation.fcn_resnet101(pretrained=True)
+        fcn_resnet101.eval()
         try:
             image = skimage.io.imread(user.userupload.file.url)
-            # image = skimage.transform.resize(image, (520, 520), anti_aliasing=True)
             image = np.transpose(image, (2, 0, 1))
+
             image = image.astype(np.float32)
             input_np = torch.from_numpy(image)
-
             normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                                 std=[0.229, 0.224, 0.225])
             input_np = normalize(input_np)
             input_np = torch.unsqueeze(input_np, 0)
-
-            fcn_resnet101 = models.segmentation.fcn_resnet101(pretrained=True)
-            fcn_resnet101.eval()
 
             output = fcn_resnet101(input_np)['out'].squeeze(0).argmax(0)
             plt.imsave(user.userupload.file.url.split('/')[-1], output)

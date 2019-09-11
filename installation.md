@@ -6,7 +6,7 @@
     python >= 3.5
     node v12.9.1
     npm 6.11.2
-    vuejs
+    vuejs 2.0
 
     后端：django
     前端：element ui + vuejs
@@ -30,11 +30,16 @@
 
     CREATE DATABASE ImageProcessDatabase CHARACTER SET utf8;
 
-### 安装深度学习所需要的库
+### 安装深度学习所需要的库以及django运行所需要库
 
-    sudo pacman -S cmake
+    git clone https://github.com/davisking/dlib.git
+    cd dlib
+    mkdir build; cd build; cmake ..; cmake --build .
+    cd ..
+    python3 setup.py install
 
     pip install face-recognition
+
     pip install pymysql
     pip install django-core-headers
 

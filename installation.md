@@ -1,25 +1,42 @@
+# 说明文档
 
+## 一　运行环境及使用框架
 
-CREATE DATABASE ImageProcessDatabase CHARACTER SET utf8;
+    Ubuntu 16
+    python >= 3.5
+    node v12.9.1
+    npm 6.11.2
+    vuejs
 
-sudo pacman -S cmake
+    后端：django
+    前端：element ui + vuejs
 
-pip install face-recognition
-pip install pymysql
-pip install django-core-headers
+## 二　环境搭建
 
-##FRONENTEND Build Setup
+### 安装django
 
-``` bash
-# install dependencies
-npm install
+    pip install django
 
-# serve with hot reload at localhost:8080
-npm run dev
-```
+### 安装vue以及所需启动前端
 
+    npm install --global vue-cli
+    cd frontend/
+    npm install
 
-pip install scipy --user
-pip install torchvision --user
-pip install tqdm --user
-pip install yacs --user
+### 安装mysql
+    sudo apt install mysql-server
+
+    mysql -uroot -p （密码设置为123456）
+
+    CREATE DATABASE ImageProcessDatabase CHARACTER SET utf8;
+
+### 安装深度学习所需要的库
+
+    sudo pacman -S cmake
+
+    pip install face-recognition
+    pip install pymysql
+    pip install django-core-headers
+
+    pip install scikit-image --user
+    pip install torchvision --user

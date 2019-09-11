@@ -116,7 +116,7 @@ class UserHistoryDownload(View):
             if record.features == 1:
                 feature = "一键\"美颜\""
             elif record.features == 2:
-                feature = "暂时未定"
+                feature = "图像分割"
             dataset.append({'id': record.id, 'date': record.date, 'feature': feature, 'image':["http://127.0.0.1:8080/api/filetransfer/storages?path="+record.init_image.url,"http://127.0.0.1:8080/api/filetransfer/storages?path="+record.result_image.url]})
         return JsonResponse(data={'dataset':dataset,
                                     'filter':filters})

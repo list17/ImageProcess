@@ -18,7 +18,7 @@
     "i": "^0.3.6",
     "mockjs": "^1.0.1-beta3",
     "node-sass": "^4.11.0",
-    "npm": "^6.9.0",
+    "npm": "^6.13.4",
     "sass-loader": "^7.1.0",
     "url-search-params-polyfill": "^5.0.0",
     "vue": "^2.5.2",
